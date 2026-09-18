@@ -1,0 +1,23 @@
+calibration_id: calibration_40x_example
+calibration_version: 0.1.0
+camera:
+  camera_model: CMOS-1.001-Nano
+  camera_pixel_size_um: 5.5
+objective:
+  objective_magnification: 40
+  object_pixel_size_um_per_px: 0.1375
+  field_of_view_x_um: 283.0
+  field_of_view_y_um: 283.0
+  working_distance_mm: 0.6
+beam_profiler:
+  vendor: Cinogy
+  sdk: RayCi
+coordinate_system:
+  image_x_positive: right
+  image_y_positive: down
+  stage_z_positive: away_from_objective
+calibration_quality:
+  pixel_scale_verified: false
+  field_of_view_verified: false
+  z_axis_direction_verified: false
+  notes: "Example values from nominal camera/objective configuration."

@@ -1,0 +1,55 @@
+recipe_id: recipe_40x_zscan_example
+recipe_version: 0.1.0
+mode: simulated
+primary_width_method: D4Sigma
+divergence_method: z_scan
+operator_confirmation_required: false
+camera:
+  camera_model: CMOS-1.001-Nano
+  width_px: 2048
+  height_px: 2048
+  pixel_size_um: 5.5
+  exposure_ms: 2.0
+  gain_db: 0.0
+  frame_average_count: 3
+objective:
+  objective_magnification: 40
+  working_distance_mm: 0.6
+scan:
+  z_unit: mm
+  beam_size_unit: um
+  divergence_unit: mrad
+  z_start_mm: -0.3
+  z_stop_mm: 0.3
+  z_step_mm: 0.1
+  z_targets_mm:
+    - -0.3
+    - -0.2
+    - -0.1
+    - 0.0
+    - 0.1
+    - 0.2
+    - 0.3
+  stage_settle_time_ms: 100
+analysis:
+  subtract_background: true
+  saturation_threshold_count: 4095
+  min_peak_intensity_count: 100
+  centroid_method: intensity_weighted
+  width_method: D4Sigma
+limits:
+  max_valid_beam_diameter_um: 180.0
+outputs:
+  run_name_template: "{timestamp}_40x_zscan"
+  save_raw_images: false
+  save_processed_data: false
+  z_scan_table_name: z_scan_table.csv
+  result_summary_name: result_summary.json
+  html_report_name: report.html
+  pdf_report_name: report.pdf
+safety:
+  z_soft_min_mm: -0.5
+  z_soft_max_mm: 0.5
+  require_home_before_scan: true
+  abort_on_saturation: true
+  abort_on_low_signal: true

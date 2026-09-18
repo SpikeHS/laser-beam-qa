@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>激光模斑扫描报告 - {{ summary.run_id }}</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #5b6474;
+      --line: #d9dee8;
+      --panel: #f6f8fb;
+      --accent: #0f766e;
+      --pass: #166534;
+      --fail: #b91c1c;
+      --warn: #a16207;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 28px;
+      color: var(--ink);
+      font-family: "Microsoft YaHei", Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      background: #fff;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--ink);
+    }
+    h1, h2, h3 { margin: 0; letter-spacing: 0; }
+    h1 { font-size: 23px; }
+    h2 {
+      margin-top: 24px;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--line);
+      font-size: 16px;
+    }
+    h3 { margin: 12px 0 7px; font-size: 13px; }
+    .meta, figcaption, .note { color: var(--muted); }
+    .judgement {
+      min-width: 120px;
+      align-self: flex-start;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .PASS { color: var(--pass); }
+    .FAIL { color: var(--fail); }
+    .WARNING { color: var(--warn); }
+    .UNKNOWN { color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; }
+    th, td {
+      padding: 7px 8px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+    th { background: var(--panel); color: var(--muted); text-align: left; }
+    .highlight-table td { font-size: 14px; }
+    .highlight-table td:first-child { color: var(--accent); font-weight: 700; }
+    .media {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      align-items: start;
+    }
+    .key-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .appendix-gallery {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    figure { margin: 0; padding: 9px; border: 1px solid var(--line); background: #fff; }
+    figure img { display: block; width: 100%; height: auto; object-fit: contain; }
+    .media figure img { max-height: 620px; }
+    .key-gallery figure img { max-height: 330px; }
+    .appendix-gallery figure img { max-height: 250px; }
+    .key-gallery img, .appendix-gallery img { image-rendering: pixelated; }
+    .table-scroll { overflow-x: auto; }
+    figcaption { margin-top: 7px; font-size: 11px; }
+    details { margin-top: 14px; padding: 10px; border: 1px solid var(--line); }
+    summary { cursor: pointer; font-weight: 700; }
+    .warning { color: var(--warn); font-weight: 700; }
+    .empty { padding: 16px; border: 1px dashed var(--line); color: var(--muted); }
+    footer { margin-top: 24px; color: var(--muted); font-size: 11px; }
+    @media (max-width: 700px) {
+      body { padding: 12px; }
+      header { flex-wrap: wrap; gap: 10px; overflow-wrap: anywhere; }
+      .media, .key-gallery, .appendix-gallery { grid-template-columns: 1fr; }
+      .highlight-table { min-width: 750px; }
+    }
+    @media print {
+      body { padding: 16px; }
+      .media, .key-gallery { grid-template-columns: 1fr; }
+      .appendix-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      figure { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  {% set x = key_results.get('x', {}) %}
+  {% set y = key_results.get('y', {}) %}
+  {% set area = key_results.get('minimum_area', {}) %}
+  <header>
+    <div>
+      <h1>激光模斑扫描报告</h1>
+      <div class="meta">样品：{{ sample_info.sample_id or "" }} · 配方：{{ recipe.recipe_id or "" }}</div>
+      <div class="meta">Run：{{ summary.run_id }} · 完成时间：{{ summary.finalized_at_iso or "--" }}</div>
+    </div>
+    <div class="judgement {{ summary.final_judgement }}">
+      {% if linear_model %}
+      <div>{{ '测量完成' if summary.measurement_status == 'complete' else '测量未完成' }}</div>
+      <div>{{ '验收：' ~ summary.final_judgement if summary.acceptance_applied else '未应用验收规格' }}</div>
+      {% else %}{{ summary.final_judgement }}{% endif %}
+    </div>
+  </header>
+
+  <h2>核心结果</h2>
+  <div class="table-scroll">
+  <table class="highlight-table">
+    <tr>
+      <th>方向</th>
+      <th>最小直径 (um)</th>
+      <th>最小值位置 z (mm)</th>
+      <th>实测全角 (mrad)</th>
+      <th>夫琅禾费预测全角 (mrad)</th>
+      <th>拟合 R2</th>
+      <th>残差标准差 (um)</th>
+      <th>拟合点数</th>
+    </tr>
+    <tr>
+      <td>X</td>
+      <td>{{ x.get('minimum_diameter_um') }}</td>
+      <td>{{ x.get('minimum_z_mm') }}</td>
+      <td>{{ x.get('measured_full_angle_mrad') }}</td>
+      <td>{{ x.get('fraunhofer_ideal_full_angle_mrad') }}</td>
+      <td>{{ x.get('fit_r2') }}</td>
+      <td>{{ x.get('residual_std_um') if x.get('residual_std_um') is not none else '--' }}</td>
+      <td>{{ x.get('valid_points_count') }}</td>
+    </tr>
+    <tr>
+      <td>Y</td>
+      <td>{{ y.get('minimum_diameter_um') }}</td>
+      <td>{{ y.get('minimum_z_mm') }}</td>
+      <td>{{ y.get('measured_full_angle_mrad') }}</td>
+      <td>{{ y.get('fraunhofer_ideal_full_angle_mrad') }}</td>
+      <td>{{ y.get('fit_r2') }}</td>
+      <td>{{ y.get('residual_std_um') if y.get('residual_std_um') is not none else '--' }}</td>
+      <td>{{ y.get('valid_points_count') }}</td>
+    </tr>
+    <tr>
+      <td>面积最小平面</td>
+      <td>X={{ area.get('diameter_x_um') }} / Y={{ area.get('diameter_y_um') }}</td>
+      <td>{{ area.get('z_mm') }}</td>
+      <td colspan="5">{{ '观测' if linear_model else '' }}椭圆面积：{{ area.get('area_um2') }} um2</td>
+    </tr>
+  </table>
+  </div>
+  {% if linear_model %}
+  <p class="note">
+    X：{{ '束腰趋势已确认' if x.get('waist_confirmed') else '候选最小值，非已确认束腰' }}；
+    Y：{{ '束腰趋势已确认' if y.get('waist_confirmed') else '候选最小值，非已确认束腰' }}。
+    独立 X/Y 最小值与最小椭圆面积来自全部有效主扫和精扫观测点，不受远场拟合选点限制。
+  </p>
+  {% endif %}
+  {% if waist_refinement.get('valid') %}
+  <p class="warning">
+    X/Y 最小直径来自束腰精扫观测点；精扫名义步长低于可靠定位分辨率时，其 z 位置仅作诊断，未参与发散角拟合。
+  </p>
+  {% endif %}
+  <p class="note">
+    {% if linear_model %}
+    实测全角来自独立选点的远场 OLS 直线拟合；不外推束腰。夫琅禾费理想全角按独立观测最小直径估算，
+    未确认的最小值仅为候选估计。两点拟合不提供残差标准差。
+    {% else %}
+    实测发散角来自主扫描的双轴高斯光束传播拟合。夫琅禾费预测按各方向高亮腰斑直径独立计算，不与实测值混用。
+    {% endif %}
+  </p>
+
+  {% if key_spot_images %}
+  <h2>关键模斑</h2>
+  <div class="key-gallery">
+    {% for item in key_spot_images %}
+    <figure>
+      <img src="{{ item.src }}" alt="{{ item.role }}">
+      <figcaption>{{ item.role }} · {{ item.caption }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2>双轴发散拟合</h2>
+  <div class="media">
+    <figure>
+      {% if zscan_plot_src %}
+      <img src="{{ zscan_plot_src }}" alt="X/Y beam diameter fit">
+      {% elif zscan_plot_data_uri %}
+      <img src="{{ zscan_plot_data_uri }}" alt="X/Y beam diameter fit">
+      {% else %}
+      <div class="empty">没有可绘制的主扫描拟合点。</div>
+      {% endif %}
+      <figcaption>
+        {% if linear_model %}
+        远场直线：D(z)=intercept_at_reference+slope*(z-z_reference)。
+        X/Y 仅在各自选中范围内绘制直线；未选点保留为灰色。X/Y 为连续跟踪的椭圆轴，不固定对应长短轴。
+        {% else %}
+        主扫描 X/Y 直径与高斯光束传播曲线。曲线表示
+        D(z)=sqrt(D0^2+Theta^2(z-z0)^2)，不是对散点任意连线。
+        {% endif %}
+      </figcaption>
+    </figure>
+    <figure>
+      {% if beam_propagation_plot_src %}
+      <img src="{{ beam_propagation_plot_src }}" alt="Beam centroid and propagation">
+      {% elif beam_propagation_plot_data_uri %}
+      <img src="{{ beam_propagation_plot_data_uri }}" alt="Beam centroid and propagation">
+      {% else %}
+      <div class="empty">没有可绘制的光束中心和包络数据。</div>
+      {% endif %}
+      <figcaption>主扫描光斑中心漂移，以及 X/Y 方向的拟合包络。</figcaption>
+    </figure>
+  </div>
+
+  <details>
+    <summary>拟合质量与测量说明</summary>
+    {% set fit_diagnostics = divergence.get('fit_diagnostics', {}) %}
+    {% set fit_x = fit_diagnostics.get('x', {}) %}
+    {% set fit_y = fit_diagnostics.get('y', {}) %}
+    <table>
+      <tr><th>指标</th><th>X</th><th>Y</th></tr>
+      <tr><td>半角 (mrad)</td><td>{{ divergence.half_angle_x_mrad }}</td><td>{{ divergence.half_angle_y_mrad }}</td></tr>
+      {% if linear_model %}
+      <tr><td>斜率 (um/mm)</td><td>{{ fit_x.get('slope_um_per_mm') }}</td><td>{{ fit_y.get('slope_um_per_mm') }}</td></tr>
+      <tr><td>参考位置 (mm)</td><td>{{ fit_x.get('z_reference_mm') }}</td><td>{{ fit_y.get('z_reference_mm') }}</td></tr>
+      <tr><td>参考位置截距 (um)</td><td>{{ fit_x.get('intercept_at_reference_um') }}</td><td>{{ fit_y.get('intercept_at_reference_um') }}</td></tr>
+      <tr><td>拟合状态</td><td>{{ fit_x.get('status') }}</td><td>{{ fit_y.get('status') }}</td></tr>
+      <tr><td>拟合说明</td><td>{{ fit_x.get('reasons') }}</td><td>{{ fit_y.get('reasons') }}</td></tr>
+      {% else %}
+      <tr><td>主拟合腰位 (mm)</td><td>{{ divergence.waist_z_x_mm }}</td><td>{{ divergence.waist_z_y_mm }}</td></tr>
+      <tr><td>主拟合腰斑直径 (um)</td><td>{{ divergence.waist_diameter_x_um }}</td><td>{{ divergence.waist_diameter_y_um }}</td></tr>
+      <tr><td>瑞利长度 (mm)</td><td>{{ fit_x.get('rayleigh_range_mm') }}</td><td>{{ fit_y.get('rayleigh_range_mm') }}</td></tr>
+      {% endif %}
+      <tr><td>拟合 RMSE (um)</td><td>{{ fit_x.get('fit_rmse_um') }}</td><td>{{ fit_y.get('fit_rmse_um') }}</td></tr>
+      {% if not linear_model %}
+      <tr><td>实测有效 M2</td><td>{{ measured_beam_quality.m2_x }}</td><td>{{ measured_beam_quality.m2_y }}</td></tr>
+      {% endif %}
+    </table>
+    <p class="note">
+      主宽度来源：RayCi Gaussian fit，sigma environment=2；对理想高斯光束对应 D4sigma / 1/e2 直径定义。
+      主拟合有效点数：{{ divergence.valid_points_count }}。
+    </p>
+  </details>
+
+  {% if summary.scan_status == 'incomplete' %}
+  <details open><summary>扫描未完成</summary><pre>{{ summary.scan_error }}</pre></details>
+  {% endif %}
+
+  {% if errors or invalid_points %}
+  <details open>
+    <summary>异常与无效点</summary>
+    <table>
+      <tr><th>类型/点</th><th>位置或错误码</th><th>原因</th></tr>
+      {% for point in invalid_points %}
+      <tr><td>点 {{ point.index }}</td><td>{{ point.z_actual_mm }}</td><td>{{ point.invalid_reason }}</td></tr>
+      {% endfor %}
+      {% for error in errors %}
+      <tr><td>错误</td><td>{{ error.error_code }}</td><td>{{ error.message }}</td></tr>
+      {% endfor %}
+    </table>
+  </details>
+  {% endif %}
+
+  <details>
+    <summary>数据文件</summary>
+    <table>
+      <tr><th>内容</th><th>路径</th></tr>
+      <tr><td>全部扫描点数值</td><td>{{ output_files.get('z_scan_table', 'z_scan_table.csv') }}</td></tr>
+      <tr><td>结果摘要 JSON</td><td>{{ output_files.get('result_summary', 'result_summary.json') }}</td></tr>
+      <tr><td>全部摘要数值 CSV</td><td>{{ output_files.get('result_summary_csv', 'result_summary.csv') }}</td></tr>
+    </table>
+  </details>
+
+  <footer>
+    报告不保存原始灰度帧；以下热度图由扫描期间的临时帧统一色标、裁切并按识别轴向旋转生成。
+  </footer>
+
+  <details class="point-appendix">
+  <summary>附录：全部扫描点模斑图</summary>
+  <div class="appendix-gallery">
+    {% for item in beam_spot_images %}
+    <figure>
+      <img src="{{ item.src }}" alt="Scan point {{ loop.index }}">
+      <figcaption>{{ item.caption }}</figcaption>
+    </figure>
+    {% else %}
+    <div class="empty">没有逐点模斑图。</div>
+    {% endfor %}
+  </div>
+  </details>
+</body>
+</html>

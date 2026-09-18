@@ -1,0 +1,1 @@
+"""Simulated beam profiler."""

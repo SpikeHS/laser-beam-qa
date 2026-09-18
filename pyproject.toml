@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "laser-beam-qa"
+version = "0.1.0"
+description = "Hardware-free laser beam analysis, simulated z-scans and reproducible reports"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Sen Hu"}]
+dependencies = ["numpy>=1.26", "scipy>=1.13", "matplotlib>=3.8", "pillow>=10.0", "pyyaml>=6.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "build>=1.2"]
+
+[project.scripts]
+lbqa-simulated-zscan = "lbqa_cli.simulated_zscan:main"
+
+[project.urls]
+Repository = "https://github.com/SpikeHS/laser-beam-qa"
+Issues = "https://github.com/SpikeHS/laser-beam-qa/issues"
+
+[tool.setuptools]
+package-dir = {"" = "packages"}
+
+[tool.setuptools.packages.find]
+where = ["packages"]
+include = ["lbqa_*"]
+
+[tool.setuptools.package-data]
+lbqa_data = ["report_templates/*.j2"]

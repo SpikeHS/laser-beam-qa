@@ -1,0 +1,1 @@
+"""Simulated translation stage."""

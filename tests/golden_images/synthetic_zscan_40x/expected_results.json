@@ -1,0 +1,119 @@
+{
+  "calibration": {
+    "calibration_id": "golden-synthetic-40x",
+    "camera_pixel_size_um": 5.5,
+    "effective_pixel_x_um": 0.1375,
+    "effective_pixel_y_um": 0.1375,
+    "field_of_view_x_um": 52.800000000000004,
+    "field_of_view_y_um": 52.800000000000004,
+    "magnification": 40.0,
+    "working_distance_mm": 0.6
+  },
+  "description": "Deterministic 40x synthetic z-scan golden images for analysis regression.",
+  "expected_zscan": {
+    "fit_r2_x": 0.9999997911204537,
+    "fit_r2_y": 0.9999998026166447,
+    "full_angle_x_mrad": 7.993580220849796,
+    "full_angle_y_mrad": 9.992902981431044,
+    "half_angle_x_mrad": 3.996790110424898,
+    "half_angle_y_mrad": 4.996451490715522,
+    "valid_points_count": 7,
+    "waist_diameter_x_um": 17.990583153852324,
+    "waist_diameter_y_um": 21.988471588098676,
+    "waist_z_x_mm": -1.7792112294445797e-15,
+    "waist_z_y_mm": -1.7077256578234237e-15
+  },
+  "fixture_version": "2026-06-22.1",
+  "planes": [
+    {
+      "expected_centroid_x_um": 26.33125,
+      "expected_centroid_y_um": 26.33125,
+      "expected_d4sigma_x_um": 18.618848356026653,
+      "expected_d4sigma_y_um": 22.791299521453507,
+      "image_path": "plane_00_z_-600um.tiff",
+      "synthetic_truth_d4sigma_x_um": 18.62900963551203,
+      "synthetic_truth_d4sigma_y_um": 22.80350850198276,
+      "z_actual_mm": -0.6
+    },
+    {
+      "expected_centroid_x_um": 26.33125,
+      "expected_centroid_y_um": 26.33125,
+      "expected_d4sigma_x_um": 18.272679404956577,
+      "expected_d4sigma_y_um": 22.34870715361825,
+      "image_path": "plane_01_z_-400um.tiff",
+      "synthetic_truth_d4sigma_x_um": 18.2822318112423,
+      "synthetic_truth_d4sigma_y_um": 22.360679774997898,
+      "z_actual_mm": -0.4
+    },
+    {
+      "expected_centroid_x_um": 26.33125,
+      "expected_centroid_y_um": 26.33125,
+      "expected_d4sigma_x_um": 18.061444752305345,
+      "expected_d4sigma_y_um": 22.079295719564474,
+      "image_path": "plane_02_z_-200um.tiff",
+      "synthetic_truth_d4sigma_x_um": 18.07097119692243,
+      "synthetic_truth_d4sigma_y_um": 22.090722034374522,
+      "z_actual_mm": -0.2
+    },
+    {
+      "expected_centroid_x_um": 26.33125,
+      "expected_centroid_y_um": 26.33125,
+      "expected_d4sigma_x_um": 17.990451708150857,
+      "expected_d4sigma_y_um": 21.98828263158956,
+      "image_path": "plane_03_z_0000um.tiff",
+      "synthetic_truth_d4sigma_x_um": 18.0,
+      "synthetic_truth_d4sigma_y_um": 22.0,
+      "z_actual_mm": 0.0
+    },
+    {
+      "expected_centroid_x_um": 26.33125,
+      "expected_centroid_y_um": 26.33125,
+      "expected_d4sigma_x_um": 18.061444752305345,
+      "expected_d4sigma_y_um": 22.079295719564474,
+      "image_path": "plane_04_z_0200um.tiff",
+      "synthetic_truth_d4sigma_x_um": 18.07097119692243,
+      "synthetic_truth_d4sigma_y_um": 22.090722034374522,
+      "z_actual_mm": 0.2
+    },
+    {
+      "expected_centroid_x_um": 26.33125,
+      "expected_centroid_y_um": 26.33125,
+      "expected_d4sigma_x_um": 18.272679404956577,
+      "expected_d4sigma_y_um": 22.34870715361825,
+      "image_path": "plane_05_z_0400um.tiff",
+      "synthetic_truth_d4sigma_x_um": 18.2822318112423,
+      "synthetic_truth_d4sigma_y_um": 22.360679774997898,
+      "z_actual_mm": 0.4
+    },
+    {
+      "expected_centroid_x_um": 26.33125,
+      "expected_centroid_y_um": 26.33125,
+      "expected_d4sigma_x_um": 18.618848356026653,
+      "expected_d4sigma_y_um": 22.791299521453507,
+      "image_path": "plane_06_z_0600um.tiff",
+      "synthetic_truth_d4sigma_x_um": 18.62900963551203,
+      "synthetic_truth_d4sigma_y_um": 22.80350850198276,
+      "z_actual_mm": 0.6
+    }
+  ],
+  "quality_limits": {
+    "bit_depth": 12,
+    "edge_energy_limit_percent": 20.0,
+    "edge_margin_px": 4,
+    "low_signal_threshold_percent": 1.0,
+    "saturation_threshold_percent": 99.5
+  },
+  "synthetic_truth": {
+    "full_angle_x_mrad": 8.0,
+    "full_angle_y_mrad": 10.0,
+    "waist_diameter_x_um": 18.0,
+    "waist_diameter_y_um": 22.0,
+    "waist_z_mm": 0.0
+  },
+  "tolerances": {
+    "centroid_abs_um": 0.02,
+    "d4sigma_abs_um": 0.08,
+    "fit_r2_min": 0.999,
+    "full_angle_abs_mrad": 0.15
+  }
+}
