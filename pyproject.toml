@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "laser-beam-qa"
 version = "0.1.0"
-description = "Hardware-free laser beam analysis, simulated z-scans and reproducible reports"
+description = "Open-source optical quality testing and analysis algorithms for laser-beam characterization"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}

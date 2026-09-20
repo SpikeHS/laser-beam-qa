@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+Clarify the project's focus on open-source optical quality testing and analysis
+algorithms for laser-beam characterization, with simulation as a reference workflow.
+
 ## 0.1.0 — 2026-09-18
 
 First public extraction of the laboratory project's analysis and simulation

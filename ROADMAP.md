@@ -1,5 +1,9 @@
 # Roadmap
 
+The project develops reusable optical quality testing and analysis algorithms,
+starting with laser-beam intensity and propagation. Simulation provides a
+reference workflow for checking these algorithms with known inputs.
+
 ## Available in 0.1.0
 - Pure analysis APIs, unit-bearing data contracts and synthetic fixtures.
 - Simulated acquisition/scan orchestration and CSV/JSON/HTML output.

@@ -3,22 +3,35 @@
 [![CI](https://github.com/SpikeHS/laser-beam-qa/actions/workflows/ci.yml/badge.svg)](https://github.com/SpikeHS/laser-beam-qa/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Hardware-free laser beam analysis, simulated z-scans and inspectable reports.**
+**Open-source optical quality testing and analysis algorithms, focused on laser-beam characterization.**
 
 Developed from laser-characterization work in the N09 laboratory at the
-Institute of Physics, Chinese Academy of Sciences. This first public version
-extracts the reusable analysis and simulation core of a larger local project.
-It can be used and tested without a camera, motor stage or vendor SDK.
+Institute of Physics, Chinese Academy of Sciences. Laser Beam QA turns beam
+images and axial scan results into quantitative, inspectable optical metrics.
+Its reusable Python algorithms cover beam shape, width, propagation and
+measurement-quality checks, with explicit units and documented fit assumptions.
+
+The public package also provides simulated acquisition and z-scans as a
+reproducible reference workflow. You can explore and test the analysis without
+a camera, motor stage or vendor SDK, then use the analysis APIs with your own
+calibrated inputs.
 
 [中文说明](README.zh-CN.md) · [Methods](docs/methods.md) · [Roadmap](ROADMAP.md)
 
-## What it does
+## Analysis capabilities
 
-- Measures intensity-weighted centroid, D4σ, FWHM and ellipse geometry.
-- Simulates an astigmatic beam, image acquisition and a guarded z-scan sequence.
-- Fits a Gaussian-caustic z-scan; provides a separate far-field linear-fit API.
-- Saves calibration/recipe snapshots, CSV/JSON results and HTML reports.
-- Includes deterministic synthetic images, numerical regressions and end-to-end tests.
+| Analysis task | Algorithms and outputs |
+| --- | --- |
+| Beam position and shape | Intensity-weighted centroid, ellipse geometry and principal axes |
+| Beam width | D4σ second-moment diameters and profile FWHM, with calibrated pixel dimensions |
+| Beam propagation | Gaussian-caustic z-scan fitting and a separate far-field linear-fit API |
+| Measurement quality | Frame-quality checks and configurable result criteria |
+| Reproducible evaluation | Synthetic beams with known parameters, numerical regressions and end-to-end tests |
+
+The reference scan workflow saves calibration/recipe snapshots, CSV/JSON
+results and HTML reports. Algorithm implementations are in
+[`packages/lbqa_analysis`](packages/lbqa_analysis); their unit-bearing inputs
+and outputs are defined in [`packages/lbqa_contracts`](packages/lbqa_contracts).
 
 ## Quick start
 
@@ -49,6 +62,9 @@ source checkout. A built wheel installs the `lbqa-simulated-zscan` command;
 use the example configuration files from the checkout or source archive.
 
 ## Scope and scientific interpretation
+
+The current optical-quality scope is **laser-beam intensity and propagation
+analysis**. It does not cover wavefront sensing or imaging-system MTF.
 
 Physical fields include units, such as `z_actual_mm` and `full_angle_x_mrad`.
 Nominal example calibration is not a calibration of your equipment. The z-scan
