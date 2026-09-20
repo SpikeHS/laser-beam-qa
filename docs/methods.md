@@ -1,5 +1,10 @@
 # Methods and reproducibility
 
+Laser Beam QA provides optical quality testing and analysis algorithms for
+laser-beam intensity and propagation measurements. The analysis functions are
+independent of the simulated acquisition workflow; calibrated image dimensions,
+axial positions and an appropriate model remain the caller's responsibility.
+
 - **D4σ:** four times the intensity-weighted standard deviation of the
   background-corrected image, with separate image axes and principal axes.
   Background, clipping, ROI and saturation affect second moments.
